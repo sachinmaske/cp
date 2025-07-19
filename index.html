@@ -658,37 +658,48 @@
 
         <div class="city-selector">
             <div class="selector-row">
-                <div class="selector-label">Cities:</div>
+                <div class="selector-label">Country:</div>
                 <div class="dropdown-container">
-                    <select class="dropdown" id="cityDropdown">
-                        <option value="">Select a city...</option>
+                    <select class="dropdown" id="countryDropdown">
+                        <option value="">Select a country...</option>
                         <optgroup label="🌍 Europe">
-                            <option value="London">🇬🇧 London, UK</option>
-                            <option value="Paris">🇫🇷 Paris, France</option>
-                            <option value="Berlin">🇩🇪 Berlin, Germany</option>
-                            <option value="Amsterdam">🇳🇱 Amsterdam, Netherlands</option>
-                            <option value="Rome">🇮🇹 Rome, Italy</option>
-                            <option value="Madrid">🇪🇸 Madrid, Spain</option>
+                            <option value="United Kingdom">🇬🇧 United Kingdom</option>
+                            <option value="France">🇫🇷 France</option>
+                            <option value="Germany">🇩🇪 Germany</option>
+                            <option value="Spain">🇪🇸 Spain</option>
+                            <option value="Italy">🇮🇹 Italy</option>
+                            <option value="Netherlands">🇳🇱 Netherlands</option>
+                            <option value="Sweden">🇸🇪 Sweden</option>
+                            <option value="Norway">🇳🇴 Norway</option>
+                            <option value="Switzerland">🇨🇭 Switzerland</option>
                         </optgroup>
                         <optgroup label="🌎 Americas">
-                            <option value="New York">🇺🇸 New York, USA</option>
-                            <option value="Los Angeles">🇺🇸 Los Angeles, USA</option>
-                            <option value="Toronto">🇨🇦 Toronto, Canada</option>
-                            <option value="Mexico City">🇲🇽 Mexico City, Mexico</option>
-                            <option value="São Paulo">🇧🇷 São Paulo, Brazil</option>
+                            <option value="United States">🇺🇸 United States</option>
+                            <option value="Canada">🇨🇦 Canada</option>
+                            <option value="Mexico">🇲🇽 Mexico</option>
+                            <option value="Brazil">🇧🇷 Brazil</option>
+                            <option value="Argentina">🇦🇷 Argentina</option>
                         </optgroup>
                         <optgroup label="🌏 Asia & Pacific">
-                            <option value="Tokyo">🇯🇵 Tokyo, Japan</option>
-                            <option value="Mumbai">🇮🇳 Mumbai, India</option>
-                            <option value="Seoul">🇰🇷 Seoul, South Korea</option>
-                            <option value="Sydney">🇦🇺 Sydney, Australia</option>
+                            <option value="Japan">🇯🇵 Japan</option>
+                            <option value="India">🇮🇳 India</option>
+                            <option value="South Korea">🇰🇷 South Korea</option>
+                            <option value="China">🇨🇳 China</option>
+                            <option value="Australia">🇦🇺 Australia</option>
                             <option value="Singapore">🇸🇬 Singapore</option>
-                            <option value="Bangkok">🇹🇭 Bangkok, Thailand</option>
+                            <option value="Thailand">🇹🇭 Thailand</option>
                         </optgroup>
                         <optgroup label="🌍 Middle East & Africa">
-                            <option value="Dubai">🇦🇪 Dubai, UAE</option>
-                            <option value="Cape Town">🇿🇦 Cape Town, South Africa</option>
+                            <option value="UAE">🇦🇪 United Arab Emirates</option>
+                            <option value="South Africa">🇿🇦 South Africa</option>
+                            <option value="Egypt">🇪🇬 Egypt</option>
                         </optgroup>
+                    </select>
+                </div>
+                <div class="selector-label">City:</div>
+                <div class="dropdown-container">
+                    <select class="dropdown" id="cityDropdown" disabled>
+                        <option value="">Select country first...</option>
                     </select>
                 </div>
                 <button class="favorites-quick-btn" id="favoritesQuickBtn">⭐ Favorites</button>
@@ -711,6 +722,9 @@
                         <option value="arabic">🇸🇦 Arabic</option>
                         <option value="chinese">🇨🇳 Chinese</option>
                         <option value="russian">🇷🇺 Russian</option>
+                        <option value="dutch">🇳🇱 Dutch</option>
+                        <option value="swedish">🇸🇪 Swedish</option>
+                        <option value="norwegian">🇳🇴 Norwegian</option>
                     </select>
                 </div>
                 <div class="language-info" id="languageInfo">
@@ -750,6 +764,37 @@
             sleepEndTime: null,
             isShuffleMode: false,
             currentLanguageFilter: '',
+            currentCountry: '',
+            currentCity: '',
+            userLocation: null,
+
+            // Country to cities mapping
+            countryToCities: {
+                'United Kingdom': ['London', 'Manchester', 'Birmingham', 'Glasgow', 'Liverpool'],
+                'France': ['Paris', 'Lyon', 'Marseille', 'Toulouse', 'Nice'],
+                'Germany': ['Berlin', 'Munich', 'Hamburg', 'Cologne', 'Frankfurt'],
+                'Spain': ['Madrid', 'Barcelona', 'Valencia', 'Seville', 'Bilbao'],
+                'Italy': ['Rome', 'Milan', 'Naples', 'Turin', 'Florence'],
+                'Netherlands': ['Amsterdam', 'Rotterdam', 'The Hague', 'Utrecht', 'Eindhoven'],
+                'Sweden': ['Stockholm', 'Gothenburg', 'Malmö', 'Uppsala', 'Västerås'],
+                'Norway': ['Oslo', 'Bergen', 'Trondheim', 'Stavanger', 'Drammen'],
+                'Switzerland': ['Zurich', 'Geneva', 'Basel', 'Bern', 'Lausanne'],
+                'United States': ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose', 'Austin', 'Jacksonville', 'Fort Worth', 'Columbus', 'Charlotte', 'San Francisco', 'Indianapolis', 'Seattle', 'Denver', 'Boston', 'Nashville', 'Miami'],
+                'Canada': ['Toronto', 'Montreal', 'Vancouver', 'Calgary', 'Edmonton', 'Ottawa', 'Winnipeg'],
+                'Mexico': ['Mexico City', 'Guadalajara', 'Monterrey', 'Puebla', 'Tijuana'],
+                'Brazil': ['São Paulo', 'Rio de Janeiro', 'Brasília', 'Salvador', 'Fortaleza'],
+                'Argentina': ['Buenos Aires', 'Córdoba', 'Rosario', 'Mendoza', 'La Plata'],
+                'Japan': ['Tokyo', 'Osaka', 'Yokohama', 'Nagoya', 'Sapporo', 'Fukuoka', 'Kobe'],
+                'India': ['Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata', 'Pune'],
+                'South Korea': ['Seoul', 'Busan', 'Incheon', 'Daegu', 'Daejeon', 'Gwangju'],
+                'China': ['Beijing', 'Shanghai', 'Guangzhou', 'Shenzhen', 'Tianjin', 'Wuhan', 'Dongguan'],
+                'Australia': ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Gold Coast'],
+                'Singapore': ['Singapore'],
+                'Thailand': ['Bangkok', 'Chiang Mai', 'Pattaya', 'Phuket', 'Hat Yai'],
+                'UAE': ['Dubai', 'Abu Dhabi', 'Sharjah', 'Al Ain', 'Ajman'],
+                'South Africa': ['Cape Town', 'Johannesburg', 'Durban', 'Pretoria', 'Port Elizabeth'],
+                'Egypt': ['Cairo', 'Alexandria', 'Giza', 'Shubra El Kheima', 'Port Said']
+            },
 
             // Enhanced station database with more cities and languages
             stationDatabase: {
@@ -789,6 +834,91 @@
                 'Berlin': [
                     { title: '🇩🇪 radioeins', location: 'Berlin, Germany', url: 'https://rbb-radioeins-live.sslcast.addradio.de/rbb/radioeins/live/mp3/128/stream.mp3', genre: 'Alternative', language: 'german' },
                     { title: '🇩🇪 Fritz', location: 'Berlin, Germany', url: 'https://rbb-fritz-live.sslcast.addradio.de/rbb/fritz/live/mp3/128/stream.mp3', genre: 'Youth Radio', language: 'german' },
+                    { title: '📰 Deutschlandfunk', location: 'Berlin, Germany', url: 'https://st01.sslstream.dlf.de/dlf/01/128/mp3/stream.mp3', genre: 'News/Culture', language: 'german' },
+                    { title: '🎼 Klassik Radio', location: 'Berlin, Germany', url: 'https://klassikr.streamabc.net/klr-klassiklivehq-mp3-192-4529793', genre: 'Classical', language: 'german' }
+                ],
+                'Munich': [
+                    { title: '🇩🇪 Bayern 1', location: 'Munich, Germany', url: 'https://br-b1-live.sslcast.addradio.de/br/b1/live/mp3/128/stream.mp3', genre: 'Regional', language: 'german' },
+                    { title: '🇩🇪 Bayern 3', location: 'Munich, Germany', url: 'https://br-b3-live.sslcast.addradio.de/br/b3/live/mp3/128/stream.mp3', genre: 'Pop/Rock', language: 'german' },
+                    { title: '🎼 BR Klassik', location: 'Munich, Germany', url: 'https://br-brklassik-live.sslcast.addradio.de/br/brklassik/live/mp3/128/stream.mp3', genre: 'Classical', language: 'german' }
+                ],
+                'Madrid': [
+                    { title: '🇪🇸 Radio Nacional', location: 'Madrid, Spain', url: 'https://rtvehlsvodlive.akamaized.net/segments/rne/rne_r1_main.m3u8', genre: 'Public Radio', language: 'spanish' },
+                    { title: '🇪🇸 Cadena SER', location: 'Madrid, Spain', url: 'https://playerservices.streamtheworld.com/api/livestream-redirect/CADENASER.mp3', genre: 'Talk/News', language: 'spanish' },
+                    { title: '🇪🇸 Los 40', location: 'Madrid, Spain', url: 'https://playerservices.streamtheworld.com/api/livestream-redirect/LOS40.mp3', genre: 'Pop Hits', language: 'spanish' }
+                ],
+                'Barcelona': [
+                    { title: '🇪🇸 Catalunya Radio', location: 'Barcelona, Spain', url: 'https://streaming-media.catradio.cat/static/catradio-high.mp3', genre: 'Regional', language: 'spanish' },
+                    { title: '🇪🇸 RAC 1', location: 'Barcelona, Spain', url: 'https://streaming.rac1.cat/rac1-high.mp3', genre: 'Talk', language: 'spanish' },
+                    { title: '🇪🇸 Onda Cero', location: 'Barcelona, Spain', url: 'https://playerservices.streamtheworld.com/api/livestream-redirect/ONDACERO.mp3', genre: 'News', language: 'spanish' }
+                ],
+                'Stockholm': [
+                    { title: '🇸🇪 Sveriges Radio P1', location: 'Stockholm, Sweden', url: 'https://http-live.sr.se/p1-mp3-192', genre: 'Talk/News', language: 'swedish' },
+                    { title: '🇸🇪 Sveriges Radio P3', location: 'Stockholm, Sweden', url: 'https://http-live.sr.se/p3-mp3-192', genre: 'Pop/Rock', language: 'swedish' },
+                    { title: '🇸🇪 Sveriges Radio P2', location: 'Stockholm, Sweden', url: 'https://http-live.sr.se/p2-mp3-192', genre: 'Classical/Culture', language: 'swedish' }
+                ],
+                'Oslo': [
+                    { title: '🇳🇴 NRK P1', location: 'Oslo, Norway', url: 'https://lyd.nrk.no/nrk_radio_p1_ostlandssendingen_mp3_h', genre: 'Talk/News', language: 'norwegian' },
+                    { title: '🇳🇴 NRK P3', location: 'Oslo, Norway', url: 'https://lyd.nrk.no/nrk_radio_p3_mp3_h', genre: 'Youth Radio', language: 'norwegian' },
+                    { title: '🇳🇴 Radio Norge', location: 'Oslo, Norway', url: 'https://live-bauerno.sharp-stream.com/radionorge_no_mp3', genre: 'Pop/Rock', language: 'norwegian' }
+                ],
+                'Chicago': [
+                    { title: '🇺🇸 WBEZ Chicago', location: 'Chicago, USA', url: 'https://stream.wbez.org/wbez128.mp3', genre: 'Public Radio', language: 'english' },
+                    { title: '🇺🇸 B96', location: 'Chicago, USA', url: 'https://stream.revma.ihrhls.com/zc181', genre: 'Top 40', language: 'english' },
+                    { title: '🇺🇸 WXRT', location: 'Chicago, USA', url: 'https://stream.revma.ihrhls.com/zc2305', genre: 'Alternative Rock', language: 'english' }
+                ],
+                'Houston': [
+                    { title: '🇺🇸 KPRC NewsRadio', location: 'Houston, USA', url: 'https://stream.revma.ihrhls.com/zc165', genre: 'News/Talk', language: 'english' },
+                    { title: '🇺🇸 Mix 96.5', location: 'Houston, USA', url: 'https://stream.revma.ihrhls.com/zc177', genre: 'Adult Contemporary', language: 'english' },
+                    { title: '🇺🇸 KILT', location: 'Houston, USA', url: 'https://stream.revma.ihrhls.com/zc189', genre: 'Country', language: 'english' }
+                ],
+                'Montreal': [
+                    { title: '🇨🇦 CBC Radio One', location: 'Montreal, Canada', url: 'https://cbc-radio-one-mtl.live.streamtheworld.com/CBC_R1_MTL_H.mp3', genre: 'Public Radio', language: 'english' },
+                    { title: '🇨🇦 Radio-Canada', location: 'Montreal, Canada', url: 'https://rcavlive.akamaized.net/hls/live/696615/xeqam/master.m3u8', genre: 'Public Radio', language: 'french' },
+                    { title: '🇨🇦 CHOM 97.7', location: 'Montreal, Canada', url: 'https://rogers-hls.leanstream.co/rogers/mtl977fm', genre: 'Classic Rock', language: 'english' }
+                ],
+                'Vancouver': [
+                    { title: '🇨🇦 CBC Radio One', location: 'Vancouver, Canada', url: 'https://cbc-radio-one-van.live.streamtheworld.com/CBC_R1_VAN_H.mp3', genre: 'Public Radio', language: 'english' },
+                    { title: '🇨🇦 CKNW', location: 'Vancouver, Canada', url: 'https://rogers-hls.leanstream.co/rogers/van980am', genre: 'News/Talk', language: 'english' },
+                    { title: '🇨🇦 JACK 96.9', location: 'Vancouver, Canada', url: 'https://rogers-hls.leanstream.co/rogers/van969fm', genre: 'Adult Hits', language: 'english' }
+                ],
+                'Delhi': [
+                    { title: '🇮🇳 All India Radio', location: 'Delhi, India', url: 'https://air.pc.cdn.bitgravity.com/air/live/pbaudio001/playlist.m3u8', genre: 'Public Radio', language: 'hindi' },
+                    { title: '🇮🇳 Radio Mirchi', location: 'Delhi, India', url: 'https://radioindia.net/radio/mirchi983delhi/icecast.audio', genre: 'Bollywood', language: 'hindi' },
+                    { title: '🇮🇳 Red FM', location: 'Delhi, India', url: 'https://stream.zeno.fm/8wv4d8g4d5zuv', genre: 'Contemporary', language: 'hindi' }
+                ],
+                'Bangalore': [
+                    { title: '🇮🇳 Radio City', location: 'Bangalore, India', url: 'https://prclive4.listenon.in/', genre: 'Urban Contemporary', language: 'english' },
+                    { title: '🇮🇳 Big FM', location: 'Bangalore, India', url: 'https://live.bigfmindia.com/bigfm', genre: 'Bollywood Hits', language: 'hindi' },
+                    { title: '🇮🇳 Fever FM', location: 'Bangalore, India', url: 'https://node-11.zeno.fm/0q46xokm5f8uv', genre: 'Youth Radio', language: 'english' }
+                ],
+                'Osaka': [
+                    { title: '🇯🇵 FM Osaka', location: 'Osaka, Japan', url: 'https://simulradio.info/stream/fmosaka851', genre: 'J-Pop', language: 'japanese' },
+                    { title: '🇯🇵 ABC Radio', location: 'Osaka, Japan', url: 'https://simulradio.info/stream/abc1008', genre: 'Talk/News', language: 'japanese' },
+                    { title: '🇯🇵 MBS Radio', location: 'Osaka, Japan', url: 'https://simulradio.info/stream/mbs1179', genre: 'Variety', language: 'japanese' }
+                ],
+                'Busan': [
+                    { title: '🇰🇷 KBS Busan', location: 'Busan, South Korea', url: 'https://serpentine-glacier-91306.herokuapp.com/proxy?url=http://live.kbs.co.kr:1935/radio/3radio/playlist.m3u8', genre: 'Regional', language: 'korean' },
+                    { title: '🇰🇷 MBC Busan', location: 'Busan, South Korea', url: 'https://serpentine-glacier-91306.herokuapp.com/proxy?url=http://live.mbc.co.kr/radio/fm.stream/playlist.m3u8', genre: 'Music', language: 'korean' }
+                ],
+                'Melbourne': [
+                    { title: '🇦🇺 ABC Melbourne', location: 'Melbourne, Australia', url: 'https://radio-streams.abc.net.au/melbourne', genre: 'Public Radio', language: 'english' },
+                    { title: '🇦🇺 triple j', location: 'Melbourne, Australia', url: 'https://radio-streams.abc.net.au/triplej', genre: 'Alternative', language: 'english' },
+                    { title: '🇦🇺 Gold 104.3', location: 'Melbourne, Australia', url: 'https://icy.iheartmedia.com.au/1043', genre: 'Classic Hits', language: 'english' }
+                ],
+                'Abu Dhabi': [
+                    { title: '🇦🇪 Abu Dhabi FM', location: 'Abu Dhabi, UAE', url: 'https://emiratesradio1.gulfnest.com/radio/8150/radio.mp3', genre: 'Arabic Music', language: 'arabic' },
+                    { title: '🇦🇪 Emirates Radio 1', location: 'Abu Dhabi, UAE', url: 'https://emiratesradio1.gulfnest.com/radio/8000/radio.mp3', genre: 'Contemporary', language: 'english' }
+                ],
+                'Johannesburg': [
+                    { title: '🇿🇦 SAFM', location: 'Johannesburg, South Africa', url: 'https://playerservices.streamtheworld.com/api/livestream-redirect/SAFM.mp3', genre: 'Public Radio', language: 'english' },
+                    { title: '🇿🇦 94.7 Highveld Stereo', location: 'Johannesburg, South Africa', url: 'https://playerservices.streamtheworld.com/api/livestream-redirect/947_HIGHVELD_STEREO.mp3', genre: 'Contemporary', language: 'english' }
+                ],
+                'Cairo': [
+                    { title: '🇪🇬 Nile FM', location: 'Cairo, Egypt', url: 'https://streaming.nilesat.com.eg/nilestream/nilesat2', genre: 'Contemporary', language: 'english' },
+                    { title: '🇪🇬 Radio Masr', location: 'Cairo, Egypt', url: 'https://streaming.nilesat.com.eg/nilestream/nilesat1', genre: 'Arabic Music', language: 'arabic' }
+                ]
+            },, Germany', url: 'https://rbb-fritz-live.sslcast.addradio.de/rbb/fritz/live/mp3/128/stream.mp3', genre: 'Youth Radio', language: 'german' },
                     { title: '📰 Deutschlandfunk', location: 'Berlin, Germany', url: 'https://st01.sslstream.dlf.de/dlf/01/128/mp3/stream.mp3', genre: 'News/Culture', language: 'german' },
                     { title: '🎼 Klassik Radio', location: 'Berlin, Germany', url: 'https://klassikr.streamabc.net/klr-klassiklivehq-mp3-192-4529793', genre: 'Classical', language: 'german' }
                 ],
