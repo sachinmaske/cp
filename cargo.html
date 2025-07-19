@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Radio Garden">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Radio Garden">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- PWA Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxODAiIGhlaWdodD0iMTgwIiByeD0iMzAiIGZpbGw9IiMwMDdBRkYiLz4KPHN2ZyB4PSI0MCIgeT0iNDAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9IndoaXRlIj4KICA8cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJzNC40OCAxMCAxMCAxMCAxMC00LjQ4IDEwLTEwUzE3LjUyIDIgMTIgMnptLTIgMTV2LTZIOVY5aDJWN2g2djJoLTJ2MmgydjZoLTJ2Mmg2djJIMTB6Ii8+Cjwvc3ZnPgo8L3N2Zz4K">
+    
+    <!-- Manifest for PWA -->
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlJhZGlvIEdhcmRlbiIsIAogICJzaG9ydF9uYW1lIjogIlJhZGlvIiwgCiAgInN0YXJ0X3VybCI6ICIuLyIsIAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLCAKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDAwMDAwIiwgCiAgInRoZW1lX2NvbG9yIjogIiMwMDdBRkYiLCAKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTVRnd0lpQm9aV2xuYUhROUlqRTRNQ0lpSUhacFpYZENiM2c5SWpBZ01DQXhPREFnTVRnd0lpQm1hV3hzUFNKdWIyNWxJaUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lQZ3B5WldOMElIZHBaSFJvUFNJeE9EQWlJR2hsYVdkb2REMGlNVGd3SWlCeWVEMGlNekFpSUdacGJHdzlJaU13TURkQlJrWWlMejRLUEhOMlp5QjRQU0kwTUNJZ2VUMGlOREFpSUhkcFpIUm9QU0l4TURBaUlHaGxhV2RvZEQwaU1UQXdJaUIyYVdWM1FtOTRQU0l3SURBZ01qUWdNalFpSUdacGJHdzlJbmRvYVhSbElqNEtJQ0E4Y0dGMGFDQmtQU0pOTVRJZ01rTTJMalE0SURJZ01pQTJMalE0SURJZ01USnpOQzQwT0NBeE1DQXhNQ0F4TUhNeE55NDFNaUF5SURFeUlESjZiUzB5SURFMWRpMDJTRGxXT1dneUlEYzJTREZvTmpaNklETXRNWGcySUNJdlBnb3dMM04yWno0S1BDOXpkbWMrQ2c9PSIsIAogICAgICAic2l6ZXMiOiAiMTgweDE4MCIsIAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfQogIF0KfQ==">
+    
+    <title>CarPlay Radio Garden</title>
+    <style>
+        /* CarPlay-optimized styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #000;
+            color: #fff;
+            height: 100vh;
+            overflow: hidden;
+            font-size: 16px;
+        }
+
+        /* CarPlay screen dimensions: typically 800x480 or similar */
+        .carplay-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(to bottom, #1c1c1e, #000);
+        }
+
+        /* Top status bar */
+        .status-bar {
+            height: 60px;
+            background: rgba(28, 28, 30, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .app-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #007AFF;
+        }
+
+        .connection-status {
+            font-size: 14px;
+            color: #34C759;
+        }
+
+        /* Main content area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* Station display - left side */
+        .station-panel {
+            flex: 2;
+            background: rgba(28, 28, 30, 0.8);
+            border-radius: 12px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .now-playing {
+            font-size: 14px;
+            color: #8E8E93;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .station-name {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            line-height: 1.2;
+            color: #fff;
+        }
+
+        .station-location {
+            font-size: 18px;
+            color: #8E8E93;
+            margin-bottom: 20px;
+        }
+
+        .station-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+            color: #8E8E93;
+        }
+
+        .volume-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Control panel - right side */
+        .control-panel {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .control-btn {
+            background: rgba(28, 28, 30, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+            min-height: 80px;
+        }
+
+        .control-btn:hover {
+            background: rgba(58, 58, 60, 0.8);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.02);
+        }
+
+        .control-btn:active {
+            background: rgba(72, 72, 74, 0.8);
+            transform: scale(0.98);
+        }
+
+        .control-btn.primary {
+            background: #007AFF;
+            border-color: #007AFF;
+            grid-column: 1 / 3;
+            font-size: 18px;
+        }
+
+        .control-btn.primary:hover {
+            background: #0056CC;
+        }
+
+        .control-btn.primary.playing {
+            background: #FF3B30;
+            border-color: #FF3B30;
+        }
+
+        .control-btn.primary.playing:hover {
+            background: #D70015;
+        }
+
+        .control-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .control-btn.primary .control-icon {
+            font-size: 32px;
+        }
+
+        /* City selector - bottom */
+        .city-selector {
+            height: 80px;
+            background: rgba(28, 28, 30, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .city-label {
+            font-size: 14px;
+            color: #8E8E93;
+            white-space: nowrap;
+        }
+
+        .city-btn {
+            background: rgba(58, 58, 60, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .city-btn:hover {
+            background: rgba(72, 72, 74, 0.8);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .city-btn.active {
+            background: #007AFF;
+            border-color: #007AFF;
+        }
+
+        /* Loading states */
+        .loading {
+            opacity: 0.6;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* Playing indicator */
+        .playing-indicator {
+            display: none;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .playing-indicator.active {
+            display: flex;
+        }
+
+        .eq-bar {
+            width: 3px;
+            height: 12px;
+            background: #34C759;
+            border-radius: 1px;
+            animation: equalizer 0.8s ease-in-out infinite;
+        }
+
+        .eq-bar:nth-child(1) { animation-delay: 0s; }
+        .eq-bar:nth-child(2) { animation-delay: 0.2s; }
+        .eq-bar:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes equalizer {
+            0%, 100% { height: 6px; }
+            50% { height: 16px; }
+        }
+
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 1000;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        /* Responsive adjustments for different CarPlay screen sizes */
+        @media (max-width: 900px) {
+            .main-content {
+                padding: 15px;
+                gap: 15px;
+            }
+            
+            .station-name {
+                font-size: 24px;
+            }
+            
+            .station-location {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .station-panel {
+                padding: 20px;
+            }
+            
+            .status-bar {
+                height: 50px;
+            }
+            
+            .city-selector {
+                height: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="carplay-container">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="app-title">📻 Radio Garden</div>
+            <div class="connection-status" id="connectionStatus">
+                <span id="statusIcon">🟢</span> Connected
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Station Display -->
+            <div class="station-panel">
+                <div class="now-playing">NOW PLAYING</div>
+                <div class="station-name" id="stationName">Select a city to start</div>
+                <div class="station-location" id="stationLocation">Choose from cities below</div>
+                <div class="station-info">
+                    <div>
+                        <span id="stationCounter">-/-</span>
+                        <div class="playing-indicator" id="playingIndicator">
+                            <div class="eq-bar"></div>
+                            <div class="eq-bar"></div>
+                            <div class="eq-bar"></div>
+                        </div>
+                    </div>
+                    <div class="volume-info">
+                        <span>🔊</span>
+                        <span id="volumeDisplay">50%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <button class="control-btn primary" id="playPauseBtn" onclick="togglePlayback()">
+                    <div class="control-icon">▶️</div>
+                    <div>PLAY</div>
+                </button>
+
+                <button class="control-btn" onclick="previousStation()">
+                    <div class="control-icon">⏮️</div>
+                    <div>PREV</div>
+                </button>
+
+                <button class="control-btn" onclick="nextStation()">
+                    <div class="control-icon">⏭️</div>
+                    <div>NEXT</div>
+                </button>
+
+                <button class="control-btn" onclick="adjustVolume(-10)">
+                    <div class="control-icon">🔉</div>
+                    <div>VOL -</div>
+                </button>
+
+                <button class="control-btn" onclick="adjustVolume(10)">
+                    <div class="control-icon">🔊</div>
+                    <div>VOL +</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- City Selector -->
+        <div class="city-selector">
+            <div class="city-label">Cities:</div>
+            <button class="city-btn" onclick="loadCity('London')" data-city="London">London</button>
+            <button class="city-btn" onclick="loadCity('New York')" data-city="New York">New York</button>
+            <button class="city-btn" onclick="loadCity('Tokyo')" data-city="Tokyo">Tokyo</button>
+            <button class="city-btn" onclick="loadCity('Paris')" data-city="Paris">Paris</button>
+            <button class="city-btn" onclick="loadCity('Mumbai')" data-city="Mumbai">Mumbai</button>
+            <button class="city-btn" onclick="loadCity('Berlin')" data-city="Berlin">Berlin</button>
+        </div>
+    </div>
+
+    <script>
+        class CarPlayRadioGarden {
+            constructor() {
+                this.stations = [];
+                this.currentStationIndex = 0;
+                this.volume = 50;
+                this.isPlaying = false;
+                this.currentAudio = null;
+                this.currentCity = '';
+                
+                // CarPlay-specific optimizations
+                this.initializeCarPlay();
+            }
+
+            initializeCarPlay() {
+                // Optimize for CarPlay performance
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden && this.isPlaying) {
+                        // Keep playing when CarPlay app goes to background
+                        console.log('CarPlay app backgrounded, continuing playback');
+                    }
+                });
+
+                // Handle CarPlay connection status
+                this.updateConnectionStatus(true);
+                
+                // Prevent zooming and scrolling
+                document.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                }, { passive: false });
+
+                // Keyboard shortcuts for steering wheel controls
+                document.addEventListener('keydown', (e) => {
+                    e.preventDefault();
+                    switch(e.key) {
+                        case ' ':
+                        case 'Enter':
+                            this.togglePlayback();
+                            break;
+                        case 'ArrowRight':
+                            this.nextStation();
+                            break;
+                        case 'ArrowLeft':
+                            this.previousStation();
+                            break;
+                        case 'ArrowUp':
+                            this.adjustVolume(10);
+                            break;
+                        case 'ArrowDown':
+                            this.adjustVolume(-10);
+                            break;
+                    }
+                });
+            }
+
+            async loadCity(cityName) {
+                this.setActiveCity(cityName);
+                this.updateUI('Loading...', `Searching ${cityName}...`, false);
+                this.setLoadingState(true);
+
+                try {
+                    const stations = await this.fetchStations(cityName);
+                    if (stations.length > 0) {
+                        this.stations = stations;
+                        this.currentStationIndex = 0;
+                        this.currentCity = cityName;
+                        this.updateStationDisplay();
+                        this.showToast(`Loaded ${stations.length} stations from ${cityName}`);
+                    } else {
+                        this.showToast(`No stations found for ${cityName}`);
+                        this.updateConnectionStatus(false);
+                    }
+                } catch (error) {
+                    console.error('Error loading stations:', error);
+                    this.showToast('Connection failed');
+                    this.updateConnectionStatus(false);
+                } finally {
+                    this.setLoadingState(false);
+                }
+            }
+
+            async fetchStations(cityName) {
+                // Use pre-loaded station data to avoid CORS issues
+                const stationDatabase = this.getStationDatabase();
+                
+                try {
+                    // Try CORS proxy first
+                    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent('http://radio.garden/api/ara/content/search?q=' + encodeURIComponent(cityName))}`;
+                    const response = await fetch(proxyUrl);
+                    const data = await response.json();
+                    
+                    if (data.contents) {
+                        const radioData = JSON.parse(data.contents);
+                        const stations = this.parseRadioGardenData(radioData);
+                        if (stations.length > 0) {
+                            return stations.slice(0, 15);
+                        }
+                    }
+                } catch (error) {
+                    console.log('API fetch failed, using fallback data:', error);
+                }
+                
+                // Fallback to pre-loaded stations
+                const fallbackStations = stationDatabase[cityName.toLowerCase()] || stationDatabase['london'];
+                return fallbackStations.slice(0, 15);
+            }
+
+            parseRadioGardenData(data) {
+                const stations = [];
+                if (data.data && data.data.content) {
+                    for (const section of data.data.content) {
+                        if (section.type === 'list' && section.items) {
+                            for (const item of section.items) {
+                                if (item.page && item.page.type === 'channel') {
+                                    const page = item.page;
+                                    const channelId = page.url ? page.url.split('/').pop() : '';
+                                    
+                                    stations.push({
+                                        id: channelId,
+                                        title: page.title || 'Unknown Station',
+                                        location: page.subtitle || `${page.place?.title || ''}, ${page.country?.title || ''}`,
+                                        streamUrl: `https://radio.garden/api/ara/content/listen/${channelId}/channel.mp3`
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+                return stations;
+            }
+
+            getStationDatabase() {
+                // Curated list of working international radio stations
+                return {
+                    'london': [
+                        { id: 'bbc-radio-1', title: 'BBC Radio 1', location: 'London, UK', streamUrl: 'http://stream.live.vc.bbcmedia.co.uk/bbc_radio_one' },
+                        { id: 'capital-fm', title: 'Capital FM', location: 'London, UK', streamUrl: 'http://media-ssl.musicradio.com/CapitalMP3' },
+                        { id: 'bbc-radio-2', title: 'BBC Radio 2', location: 'London, UK', streamUrl: 'http://stream.live.vc.bbcmedia.co.uk/bbc_radio_two' },
+                        { id: 'heart-london', title: 'Heart London', location: 'London, UK', streamUrl: 'http://media-ssl.musicradio.com/HeartLondonMP3' },
+                        { id: 'lbc', title: 'LBC', location: 'London, UK', streamUrl: 'http://media-ssl.musicradio.com/LBCMP3' },
+                        { id: 'kiss-fm', title: 'Kiss FM', location: 'London, UK', streamUrl: 'http://vis.media-ice.musicradio.com/KissFMMP3' },
+                        { id: 'magic-fm', title: 'Magic FM', location: 'London, UK', streamUrl: 'http://vis.media-ice.musicradio.com/MagicMP3' },
+                        { id: 'jazz-fm', title: 'Jazz FM', location: 'London, UK', streamUrl: 'http://edge-bauerall-01-gos2.sharp-stream.com/jazzhigh.aac' }
+                    ],
+                    'new york': [
+                        { id: 'z100', title: 'Z100', location: 'New York, USA', streamUrl: 'http://stream.revma.ihrhls.com/zc181' },
+                        { id: 'wnyc', title: 'WNYC FM', location: 'New York, USA', streamUrl: 'http://stream.wnyc.org/wnycfm-web' },
+                        { id: 'wcbs', title: 'WCBS-FM', location: 'New York, USA', streamUrl: 'http://stream.revma.ihrhls.com/zc177' },
+                        { id: 'wqxr', title: 'WQXR Classical', location: 'New York, USA', streamUrl: 'http://stream.wqxr.org/wqxr' },
+                        { id: 'hot97', title: 'Hot 97', location: 'New York, USA', streamUrl: 'http://stream.revma.ihrhls.com/zc185' },
+                        { id: 'kiss-fm-ny', title: 'Kiss FM NY', location: 'New York, USA', streamUrl: 'http://stream.revma.ihrhls.com/zc8807' },
+                        { id: 'wfuv', title: 'WFUV', location: 'New York, USA', streamUrl: 'http://wfuv.streamguys1.com/wfuv' }
+                    ],
+                    'tokyo': [
+                        { id: 'nhk-r1', title: 'NHK Radio 1', location: 'Tokyo, Japan', streamUrl: 'http://stream.live.vc.bbcmedia.co.uk/bbc_world_service' },
+                        { id: 'j-wave', title: 'J-Wave', location: 'Tokyo, Japan', streamUrl: 'http://radiko.jp/v2/api/ts/playlist.m3u8?station_id=FMJ' },
+                        { id: 'inter-fm', title: 'InterFM', location: 'Tokyo, Japan', streamUrl: 'http://www.simulradio.info/s/interfm897' },
+                        { id: 'tokyo-fm', title: 'Tokyo FM', location: 'Tokyo, Japan', streamUrl: 'http://radiko.jp/v2/api/ts/playlist.m3u8?station_id=FMT' },
+                        { id: 'bayfm', title: 'Bay FM', location: 'Tokyo, Japan', streamUrl: 'http://radiko.jp/v2/api/ts/playlist.m3u8?station_id=BAYFM78' }
+                    ],
+                    'paris': [
+                        { id: 'france-inter', title: 'France Inter', location: 'Paris, France', streamUrl: 'http://direct.franceinter.fr/live/franceinter-midfi.mp3' },
+                        { id: 'rtl', title: 'RTL', location: 'Paris, France', streamUrl: 'http://streaming.radio.rtl.fr/rtl-1-44-128' },
+                        { id: 'nrj', title: 'NRJ', location: 'Paris, France', streamUrl: 'http://cdn.nrjaudio.fm/adwz1/fr/30001/mp3_128.mp3' },
+                        { id: 'europe1', title: 'Europe 1', location: 'Paris, France', streamUrl: 'http://e1-live-mp3-128.scdn.arkena.com/europe1.mp3' },
+                        { id: 'radio-classique', title: 'Radio Classique', location: 'Paris, France', streamUrl: 'http://radioclassique.ice.infomaniak.ch/radioclassique-high.mp3' },
+                        { id: 'fip', title: 'FIP', location: 'Paris, France', streamUrl: 'http://direct.fipradio.fr/live/fip-midfi.mp3' }
+                    ],
+                    'mumbai': [
+                        { id: 'radio-mirchi', title: 'Radio Mirchi', location: 'Mumbai, India', streamUrl: 'http://peridot.streamguys.com:7150/Mirchi' },
+                        { id: 'red-fm', title: 'Red FM', location: 'Mumbai, India', streamUrl: 'http://stream.zeno.fm/8wv4d8g4d5zuv' },
+                        { id: 'big-fm', title: 'Big FM', location: 'Mumbai, India', streamUrl: 'http://sc-bb.1.fm:8017/;?listening-from-radio-de' },
+                        { id: 'radio-city', title: 'Radio City', location: 'Mumbai, India', streamUrl: 'http://prclive1.listenon.in/radiocity' },
+                        { id: 'fever-fm', title: 'Fever FM', location: 'Mumbai, India', streamUrl: 'http://node-11.zeno.fm/0q46xokm5f8uv' }
+                    ],
+                    'berlin': [
+                        { id: 'radioeins', title: 'radioeins', location: 'Berlin, Germany', streamUrl: 'http://www.radioeins.de/live.m3u' },
+                        { id: 'fritz', title: 'Fritz', location: 'Berlin, Germany', streamUrl: 'http://fritz.cast.addradio.de/fritz/simulcast/high/stream.mp3' },
+                        { id: 'jam-fm', title: 'JAM FM', location: 'Berlin, Germany', streamUrl: 'http://stream.jam.fm/jamfm-live/mp3-128' },
+                        { id: 'radio-berlin', title: 'Radio Berlin', location: 'Berlin, Germany', streamUrl: 'http://streams.90elf.de/berlinfm/mp3-192/streams.90elf.de/' },
+                        { id: 'klassik-radio', title: 'Klassik Radio', location: 'Berlin, Germany', streamUrl: 'http://stream.klassikradio.de/live/mp3-192' }
+                    ]
+                };
+            }
+
+            togglePlayback() {
+                if (this.stations.length === 0) {
+                    this.showToast('No stations loaded');
+                    return;
+                }
+
+                if (this.isPlaying) {
+                    this.stopAudio();
+                } else {
+                    this.playCurrentStation();
+                }
+            }
+
+            async playCurrentStation() {
+                if (this.stations.length === 0) return;
+
+                const station = this.stations[this.currentStationIndex];
+                this.stopAudio();
+
+                try {
+                    this.currentAudio = new Audio(station.streamUrl);
+                    this.currentAudio.volume = this.volume / 100;
+                    this.currentAudio.crossOrigin = 'anonymous';
+
+                    // CarPlay-optimized audio handling
+                    this.currentAudio.addEventListener('loadstart', () => {
+                        this.updatePlayButton('🔄', 'LOADING');
+                        this.setLoadingState(true);
+                    });
+
+                    this.currentAudio.addEventListener('canplay', () => {
+                        this.isPlaying = true;
+                        this.updatePlayButton('⏸️', 'PAUSE');
+                        this.setLoadingState(false);
+                        this.showPlayingIndicator(true);
+                        this.updateStationDisplay();
+                        this.updateConnectionStatus(true);
+                    });
+
+                    this.currentAudio.addEventListener('error', (e) => {
+                        console.error('Audio error:', e);
+                        this.showToast('Station unavailable');
+                        this.stopAudio();
+                        this.updateConnectionStatus(false);
+                    });
+
+                    await this.currentAudio.play();
+                    
+                } catch (error) {
+                    console.error('Playback error:', error);
+                    this.showToast('Playback failed');
+                    this.stopAudio();
+                }
+            }
+
+            stopAudio() {
+                if (this.currentAudio) {
+                    this.currentAudio.pause();
+                    this.currentAudio.src = '';
+                    this.currentAudio = null;
+                }
+                this.isPlaying = false;
+                this.updatePlayButton('▶️', 'PLAY');
+                this.showPlayingIndicator(false);
+                this.updateStationDisplay();
+            }
+
+            nextStation() {
+                if (this.stations.length === 0) return;
+                
+                const wasPlaying = this.isPlaying;
+                this.stopAudio();
+                
+                this.currentStationIndex = (this.currentStationIndex + 1) % this.stations.length;
+                this.updateStationDisplay();
+                
+                if (wasPlaying) {
+                    setTimeout(() => this.playCurrentStation(), 200);
+                }
+            }
+
+            previousStation() {
+                if (this.stations.length === 0) return;
+                
+                const wasPlaying = this.isPlaying;
+                this.stopAudio();
+                
+                this.currentStationIndex = (this.currentStationIndex - 1 + this.stations.length) % this.stations.length;
+                this.updateStationDisplay();
+                
+                if (wasPlaying) {
+                    setTimeout(() => this.playCurrentStation(), 200);
+                }
+            }
+
+            adjustVolume(change) {
+                this.volume = Math.max(0, Math.min(100, this.volume + change));
+                document.getElementById('volumeDisplay').textContent = `${this.volume}%`;
+                
+                if (this.currentAudio) {
+                    this.currentAudio.volume = this.volume / 100;
+                }
+                
+                this.showToast(`Volume: ${this.volume}%`);
+            }
+
+            updateStationDisplay() {
+                if (this.stations.length === 0) return;
+                
+                const station = this.stations[this.currentStationIndex];
+                this.updateUI(station.title, station.location, this.isPlaying);
+                
+                document.getElementById('stationCounter').textContent = 
+                    `${this.currentStationIndex + 1}/${this.stations.length}`;
+            }
+
+            updateUI(stationName, location, playing) {
+                document.getElementById('stationName').textContent = stationName;
+                document.getElementById('stationLocation').textContent = location;
+            }
+
+            updatePlayButton(icon, text) {
+                const btn = document.getElementById('playPauseBtn');
+                btn.innerHTML = `<div class="control-icon">${icon}</div><div>${text}</div>`;
+                
+                if (this.isPlaying) {
+                    btn.classList.add('playing');
+                } else {
+                    btn.classList.remove('playing');
+                }
+            }
+
+            showPlayingIndicator(show) {
+                const indicator = document.getElementById('playingIndicator');
+                if (show) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.remove('active');
+                }
+            }
+
+            setLoadingState(loading) {
+                const buttons = document.querySelectorAll('.control-btn');
+                buttons.forEach(btn => {
+                    if (loading) {
+                        btn.classList.add('loading');
+                    } else {
+                        btn.classList.remove('loading');
+                    }
+                });
+            }
+
+            setActiveCity(cityName) {
+                document.querySelectorAll('.city-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                const activeBtn = document.querySelector(`[data-city="${cityName}"]`);
+                if (activeBtn) {
+                    activeBtn.classList.add('active');
+                }
+            }
+
+            updateConnectionStatus(connected) {
+                const statusIcon = document.getElementById('statusIcon');
+                const statusText = document.getElementById('connectionStatus');
+                
+                if (connected) {
+                    statusIcon.textContent = '🟢';
+                    statusText.innerHTML = '<span id="statusIcon">🟢</span> Connected';
+                } else {
+                    statusIcon.textContent = '🔴';
+                    statusText.innerHTML = '<span id="statusIcon">🔴</span> No Signal';
+                }
+            }
+
+            showToast(message) {
+                const existingToast = document.querySelector('.toast');
+                if (existingToast) existingToast.remove();
+                
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.remove();
+                }, 2500);
+            }
+        }
+
+        // Initialize CarPlay Radio
+        const carPlayRadio = new CarPlayRadioGarden();
+
+        // Global functions
+        function loadCity(city) { carPlayRadio.loadCity(city); }
+        function togglePlayback() { carPlayRadio.togglePlayback(); }
+        function nextStation() { carPlayRadio.nextStation(); }
+        function previousStation() { carPlayRadio.previousStation(); }
+        function adjustVolume(change) { carPlayRadio.adjustVolume(change); }
+
+        // Auto-load default city
+        setTimeout(() => {
+            carPlayRadio.loadCity('London');
+        }, 1000);
+    </script>
+</body>
+</html>
