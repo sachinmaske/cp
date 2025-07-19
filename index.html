@@ -420,6 +420,10 @@
             }
 
             initializeCarPlay() {
+                // Initialize audio context on first user interaction
+                this.audioInitialized = false;
+                this.setupAudioContext();
+                
                 // Optimize for CarPlay performance
                 document.addEventListener('visibilitychange', () => {
                     if (document.hidden && this.isPlaying) {
@@ -435,6 +439,13 @@
                 document.addEventListener('touchmove', (e) => {
                     e.preventDefault();
                 }, { passive: false });
+
+                // Initialize audio on first click
+                document.addEventListener('click', () => {
+                    if (!this.audioInitialized) {
+                        this.initializeAudio();
+                    }
+                }, { once: true });
 
                 // Keyboard shortcuts for steering wheel controls
                 document.addEventListener('keydown', (e) => {
@@ -458,6 +469,38 @@
                             break;
                     }
                 });
+            }
+
+            setupAudioContext() {
+                // Create audio context for better browser compatibility
+                try {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    // Resume audio context on user interaction
+                    const resumeAudio = () => {
+                        if (this.audioContext.state === 'suspended') {
+                            this.audioContext.resume().then(() => {
+                                console.log('Audio context resumed');
+                                this.audioInitialized = true;
+                            });
+                        }
+                    };
+                    
+                    document.addEventListener('touchstart', resumeAudio, { once: true });
+                    document.addEventListener('click', resumeAudio, { once: true });
+                    
+                } catch (e) {
+                    console.log('Web Audio API not supported:', e);
+                }
+            }
+
+            initializeAudio() {
+                // Enable audio for autoplay
+                if (this.audioContext && this.audioContext.state === 'suspended') {
+                    this.audioContext.resume();
+                }
+                this.audioInitialized = true;
+                console.log('Audio initialized for playback');
             }
 
             async loadCity(cityName) {
@@ -610,14 +653,22 @@
                 this.stopAudio();
 
                 try {
-                    this.currentAudio = new Audio(station.streamUrl);
-                    this.currentAudio.volume = this.volume / 100;
+                    // Create audio with better compatibility
+                    this.currentAudio = new Audio();
                     this.currentAudio.crossOrigin = 'anonymous';
+                    this.currentAudio.preload = 'none';
+                    this.currentAudio.volume = this.volume / 100;
 
-                    // CarPlay-optimized audio handling
+                    // Better error handling for different stream types
+                    const streamUrls = this.getStreamUrls(station);
+                    
                     this.currentAudio.addEventListener('loadstart', () => {
                         this.updatePlayButton('🔄', 'LOADING');
                         this.setLoadingState(true);
+                    });
+
+                    this.currentAudio.addEventListener('loadeddata', () => {
+                        console.log('Audio data loaded successfully');
                     });
 
                     this.currentAudio.addEventListener('canplay', () => {
@@ -627,22 +678,95 @@
                         this.showPlayingIndicator(true);
                         this.updateStationDisplay();
                         this.updateConnectionStatus(true);
+                        this.showToast(`Playing: ${station.title}`);
                     });
 
-                    this.currentAudio.addEventListener('error', (e) => {
+                    this.currentAudio.addEventListener('error', async (e) => {
                         console.error('Audio error:', e);
-                        this.showToast('Station unavailable');
+                        console.log('Error code:', this.currentAudio.error?.code);
+                        console.log('Error message:', this.currentAudio.error?.message);
+                        
+                        // Try alternative stream URL
+                        if (streamUrls.length > 1) {
+                            const nextUrl = streamUrls.shift();
+                            console.log('Trying alternative URL:', nextUrl);
+                            this.currentAudio.src = nextUrl;
+                            this.currentAudio.load();
+                            return;
+                        }
+                        
+                        this.showToast('Stream unavailable - trying alternative');
                         this.stopAudio();
                         this.updateConnectionStatus(false);
+                        
+                        // Auto-try next station if current fails
+                        setTimeout(() => {
+                            this.nextStation();
+                        }, 2000);
                     });
 
+                    this.currentAudio.addEventListener('ended', () => {
+                        console.log('Stream ended, attempting reconnect...');
+                        setTimeout(() => {
+                            if (this.isPlaying) {
+                                this.playCurrentStation();
+                            }
+                        }, 1000);
+                    });
+
+                    // Set source and attempt to play
+                    this.currentAudio.src = streamUrls[0];
+                    this.currentAudio.load();
+                    
+                    // Wait for user interaction before playing (browser requirement)
                     await this.currentAudio.play();
                     
                 } catch (error) {
                     console.error('Playback error:', error);
-                    this.showToast('Playback failed');
+                    
+                    if (error.name === 'NotAllowedError') {
+                        this.showToast('Tap play button to start audio');
+                    } else if (error.name === 'NotSupportedError') {
+                        this.showToast('Audio format not supported');
+                    } else {
+                        this.showToast('Playback failed - trying next station');
+                        setTimeout(() => {
+                            this.nextStation();
+                        }, 2000);
+                    }
+                    
                     this.stopAudio();
                 }
+            }
+
+            getStreamUrls(station) {
+                // Provide multiple stream URL options for better compatibility
+                const baseId = station.id;
+                return [
+                    station.streamUrl,
+                    `https://radio.garden/api/ara/content/listen/${baseId}/channel.mp3`,
+                    `http://radio.garden/api/ara/content/listen/${baseId}/channel.mp3`,
+                    // Fallback to internet radio URLs if available
+                    this.getInternetRadioUrl(station.title)
+                ].filter(url => url && url !== 'undefined');
+            }
+
+            getInternetRadioUrl(stationName) {
+                // Backup internet radio streams
+                const backupStreams = {
+                    'BBC Radio 1': 'http://stream.live.vc.bbcmedia.co.uk/bbc_radio_one',
+                    'BBC Radio 2': 'http://stream.live.vc.bbcmedia.co.uk/bbc_radio_two',
+                    'Capital FM': 'http://media-ssl.musicradio.com/CapitalMP3',
+                    'Heart London': 'http://media-ssl.musicradio.com/HeartLondonMP3',
+                    'Kiss FM': 'http://vis.media-ice.musicradio.com/KissFMMP3',
+                    'Magic FM': 'http://vis.media-ice.musicradio.com/MagicMP3',
+                    'Jazz FM': 'http://edge-bauerall-01-gos2.sharp-stream.com/jazzhigh.aac',
+                    'France Inter': 'http://direct.franceinter.fr/live/franceinter-midfi.mp3',
+                    'RTL': 'http://streaming.radio.rtl.fr/rtl-1-44-128',
+                    'NRJ': 'http://cdn.nrjaudio.fm/adwz1/fr/30001/mp3_128.mp3'
+                };
+                
+                return backupStreams[stationName] || null;
             }
 
             stopAudio() {
